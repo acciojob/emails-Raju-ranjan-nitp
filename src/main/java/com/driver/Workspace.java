@@ -12,11 +12,13 @@ public class Workspace extends Gmail{
 
     public Workspace(String emailId) {
         // The inboxCapacity is equal to the maximum value an integer can store.
-
+       super(emailId, Integer.MAX_VALUE);
+       this.calendar = new ArrayList<>();
     }
 
     public void addMeeting(Meeting meeting){
         //add the meeting to calendar
+        calendar.add(meeting);
 
     }
 
@@ -25,6 +27,29 @@ public class Workspace extends Gmail{
         // 1. At a particular time, you can be present in at most one meeting
         // 2. If you want to attend a meeting, you must join it at its start time and leave at end time.
         // Example: If a meeting ends at 10:00 am, you cannot attend another meeting starting at 10:00 am
+        int maxMeetings = 0;
 
+        for (Meeting currentMeeting : calendar) {
+            int overlappingMeetings = 0;
+
+            for (Meeting otherMeeting : calendar) {
+                if (otherMeeting != currentMeeting) {
+                    if (isOverlapping(currentMeeting, otherMeeting)) {
+                        overlappingMeetings++;
+                        break;
+                    }
+                }
+            }
+
+            if (overlappingMeetings == 0) {
+                maxMeetings++;
+            }
+        }
+
+        return maxMeetings;
     }
+    private boolean isOverlapping(Meeting meeting1, Meeting meeting2) {
+        return (meeting1.getStartTime().isBefore(meeting2.getEndTime()) &&
+                meeting2.getStartTime().isBefore(meeting1.getEndTime()));
+}
 }
